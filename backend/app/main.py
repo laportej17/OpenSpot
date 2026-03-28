@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
 from app.database import create_db_and_tables, engine
-from app.routers import bookings, listings
+from app.routers import bookings, listings, users
 from app.seed import seed_listings
 from sqlmodel import Session
 
@@ -16,18 +15,16 @@ app.add_middleware(
     allow_headers=['*'],
 )
 
-
 @app.on_event('startup')
 def on_startup() -> None:
     create_db_and_tables()
     with Session(engine) as session:
         seed_listings(session)
 
-
 @app.get('/')
 def read_root():
     return {'message': 'OpenSpot API is running'}
 
-
 app.include_router(listings.router)
 app.include_router(bookings.router)
+app.include_router(users.router)

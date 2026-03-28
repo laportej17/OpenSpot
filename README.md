@@ -9,7 +9,7 @@ A basic hackathon-ready full-stack starter for OpenSpot:
 ```bash
 cd backend
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
+source .venv/bin/activate  # Windows: .venv\Scripts\activate #py -3.13 -m venv .venv  
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```

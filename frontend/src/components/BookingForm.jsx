@@ -1,14 +1,15 @@
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { createBooking } from '../api/client';
 
 const initialState = {
-  user_id: 1,
   start_date: '',
   end_date: '',
   purpose: ''
 };
 
 export default function BookingForm({ listingId }) {
+  const { user } = useAuth();
   const [formData, setFormData] = useState(initialState);
   const [status, setStatus] = useState({ type: '', message: '' });
 
@@ -20,6 +21,11 @@ export default function BookingForm({ listingId }) {
   async function handleSubmit(event) {
     event.preventDefault();
     setStatus({ type: '', message: '' });
+
+    if (!user) {
+      setStatus({ type: 'error', message: 'You must be logged in to book.' });
+      return;
+    }
 
     try {
       await createBooking({

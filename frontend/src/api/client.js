@@ -6,12 +6,14 @@ function authHeaders() {
 }
 
 async function request(path, options = {}) {
+  const { headers: extraHeaders, ...restOptions } = options;
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     headers: {
       'Content-Type': 'application/json',
-      ...(options.headers || {}),
+      ...extraHeaders,
     },
-    ...options,
+    ...restOptions,
   });
 
   if (!response.ok) {
@@ -25,7 +27,6 @@ async function request(path, options = {}) {
     throw new Error(message);
   }
 
-  // 204 No Content — nothing to parse
   if (response.status === 204) return null;
   return response.json();
 }
@@ -112,8 +113,6 @@ export function updateMe(payload) {
 }
 
 // ── Image upload (Cloudinary unsigned preset) ─────────────────────────────────
-// Set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in .env
-// If not set, the ImageUploader component falls back to a plain URL input.
 
 export async function uploadImage(file) {
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;

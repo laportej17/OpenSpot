@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 import { createListing } from '../api/client';
 
 const initialState = {
@@ -12,10 +13,10 @@ const initialState = {
   size_sqft: 0,
   amenities: '',
   image_url: '',
-  owner_id: 1
 };
 
 export default function ListingForm() {
+  const { user } = useAuth();
   const [formData, setFormData] = useState(initialState);
   const [status, setStatus] = useState({ type: '', message: '' });
 
@@ -27,6 +28,11 @@ export default function ListingForm() {
   async function handleSubmit(event) {
     event.preventDefault();
     setStatus({ type: '', message: '' });
+
+    if (!user) {
+      setStatus({ type: 'error', message: 'You must be logged in to create a listing.' });
+      return;
+    }
 
     try {
       await createListing({

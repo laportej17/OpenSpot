@@ -20,20 +20,39 @@ export default function Navbar() {
           <>
             <NavLink to="/my-listings">My Listings</NavLink>
             <NavLink to="/my-bookings">My Bookings</NavLink>
-            <span className="nav-greeting">Hi, {user.name.split(' ')[0]}</span>
-            <button className="btn-ghost" onClick={handleLogout}
-              style={{ padding: '0.4rem 1rem', fontSize: '0.875rem' }}>
+            {/* Name links to the profile page */}
+            <NavLink
+              to="/profile"
+              className="nav-greeting"
+              style={({ isActive }) => ({
+                textDecoration: 'none',
+                color: isActive ? 'var(--accent)' : 'inherit',
+              })}
+            >
+              Hi, {user.name.split(' ')[0]}
+            </NavLink>
+            <button
+              className="btn-ghost"
+              onClick={handleLogout}
+              style={{ padding: '0.4rem 1rem', fontSize: '0.875rem' }}
+            >
               Log out
             </button>
           </>
         ) : (
           <>
             <NavLink to="/login">Log in</NavLink>
-            <NavLink to="/signup" style={{
-              background: 'var(--accent)', color: 'white',
-              padding: '0.45rem 1.1rem', borderRadius: 'var(--radius-sm)',
-              fontWeight: 600, fontSize: '0.875rem'
-            }}>
+            <NavLink
+              to="/signup"
+              style={{
+                background: 'var(--accent)',
+                color: 'white',
+                padding: '0.45rem 1.1rem',
+                borderRadius: 'var(--radius-sm)',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+              }}
+            >
               Sign up
             </NavLink>
           </>

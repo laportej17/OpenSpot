@@ -1,21 +1,53 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { getListings } from '../api/client';
+
+const CATEGORIES = ['event venue', 'office', 'storage', 'studio'];
 
 export default function ListingsPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [listings, setListings] = useState([]);
-  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Filter state — initialised from URL query params
+  const [filters, setFilters] = useState({
+    category: searchParams.get('category') || '',
+    city: searchParams.get('city') || '',
+    min_price: searchParams.get('min_price') || '',
+    max_price: searchParams.get('max_price') || '',
+  });
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/listings')
-      .then(r => r.json())
-      .then(setListings);
-  }, []);
+    async function load() {
+      setLoading(true);
+      setError('');
+      try {
+        // Sync active filters into the URL
+        const params = {};
+        Object.entries(filters).forEach(([k, v]) => { if (v) params[k] = v; });
+        setSearchParams(params, { replace: true });
 
-  const filtered = listings.filter(l =>
-    l.title.toLowerCase().includes(search.toLowerCase()) ||
-    l.city.toLowerCase().includes(search.toLowerCase()) ||
-    l.category.toLowerCase().includes(search.toLowerCase())
-  );
+        const data = await getListings(filters);
+        setListings(data);
+      } catch (e) {
+        setError('Could not load listings. Is the backend running?');
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, [filters]);
+
+  function set(field) {
+    return e => setFilters(prev => ({ ...prev, [field]: e.target.value }));
+  }
+
+  function clearFilters() {
+    setFilters({ category: '', city: '', min_price: '', max_price: '' });
+  }
+
+  const hasActiveFilters = Object.values(filters).some(v => v !== '');
 
   return (
     <div className="fade-in">
@@ -24,23 +56,79 @@ export default function ListingsPage() {
         <p>Find the perfect space for your next event, project, or need</p>
       </div>
 
-      <div style={{ marginBottom: '1.75rem' }}>
-        <input
-          placeholder="Search by name, city, or category…"
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          style={{ width: '100%', maxWidth: 480, fontSize: '0.95rem' }}
-        />
+      {/* ── Filter bar ── */}
+      <div
+        className="panel"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+          gap: '0.75rem',
+          marginBottom: '1.5rem',
+          alignItems: 'end',
+        }}
+      >
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.8rem', fontWeight: 600 }}>
+          Category
+          <select value={filters.category} onChange={set('category')}>
+            <option value="">All categories</option>
+            {CATEGORIES.map(c => (
+              <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
+            ))}
+          </select>
+        </label>
+
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.8rem', fontWeight: 600 }}>
+          City
+          <input placeholder="e.g. Toronto" value={filters.city} onChange={set('city')} />
+        </label>
+
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.8rem', fontWeight: 600 }}>
+          Min price / day ($)
+          <input type="number" min="0" placeholder="0" value={filters.min_price} onChange={set('min_price')} />
+        </label>
+
+        <label style={{ display: 'flex', flexDirection: 'column', gap: '0.3rem', fontSize: '0.8rem', fontWeight: 600 }}>
+          Max price / day ($)
+          <input type="number" min="0" placeholder="Any" value={filters.max_price} onChange={set('max_price')} />
+        </label>
+
+        {hasActiveFilters && (
+          <button
+            className="btn-ghost"
+            onClick={clearFilters}
+            style={{ fontSize: '0.8rem', padding: '0.45rem 1rem', alignSelf: 'end' }}
+          >
+            Clear filters
+          </button>
+        )}
       </div>
 
-      {filtered.length === 0 ? (
+      {/* ── Results ── */}
+      {loading && (
+        <div className="empty-state"><p>Loading spaces…</p></div>
+      )}
+
+      {error && (
+        <div className="panel" style={{ color: 'var(--color-danger, #c0392b)', marginBottom: '1rem' }}>
+          {error}
+        </div>
+      )}
+
+      {!loading && !error && listings.length === 0 && (
         <div className="empty-state">
           <p style={{ fontSize: '2rem' }}>🔍</p>
-          <p>No spaces match your search.</p>
+          <p>No spaces match your filters.</p>
+          {hasActiveFilters && (
+            <button className="btn-ghost" onClick={clearFilters} style={{ marginTop: '0.75rem' }}>
+              Clear filters
+            </button>
+          )}
         </div>
-      ) : (
+      )}
+
+      {!loading && !error && listings.length > 0 && (
         <div className="card-grid">
-          {filtered.map(l => (
+          {listings.map(l => (
             <Link to={`/listings/${l.id}`} key={l.id}>
               <div className="card">
                 <img className="card-image" src={l.image_url} alt={l.title} />

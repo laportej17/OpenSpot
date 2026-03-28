@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import MyListingsPage from './pages/MyListingsPage';
 import MyBookingsPage from './pages/MyBookingsPage';
+import ProfilePage from './pages/ProfilePage';
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/my-listings" element={<MyListingsPage />} />
           <Route path="/my-bookings" element={<MyBookingsPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </main>
     </div>

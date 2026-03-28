@@ -1,0 +1,2 @@
+# OpenSpot
+Rent any space

@@ -58,6 +58,12 @@ export default function ListingDetailPage() {
             <div className="detail-meta-item"><strong>Address</strong><span>{listing.address}</span></div>
             <div className="detail-meta-item"><strong>Capacity</strong><span>{listing.capacity} people</span></div>
             <div className="detail-meta-item"><strong>Size</strong><span>{listing.size_sqft} sqft</span></div>
+            {listing.owner_name && (
+              <div className="detail-meta-item"><strong>Listed by</strong><span>{listing.owner_name}</span></div>
+            )}
+            {listing.owner_email && (
+              <div className="detail-meta-item"><strong>Contact</strong><span>{listing.owner_email}</span></div>
+            )}
           </div>
 
           {listing.amenities?.length > 0 && (

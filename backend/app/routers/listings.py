@@ -10,7 +10,7 @@ from app.models import Listing, ListingCreate, ListingUpdate, User
 router = APIRouter(prefix="/listings", tags=["listings"])
 
 
-# ── Browse (with optional server-side filters) ────────────────────────────────
+# ── Browse ────────────────────────────────────────────────────────────────────
 
 @router.get("", response_model=list[Listing])
 def read_listings(
@@ -24,7 +24,6 @@ def read_listings(
     if category:
         query = query.where(Listing.category == category)
     if city:
-        # case-insensitive partial match
         query = query.where(Listing.city.ilike(f"%{city}%"))
     if min_price is not None:
         query = query.where(Listing.price_per_day >= min_price)
@@ -33,17 +32,41 @@ def read_listings(
     return session.exec(query).all()
 
 
-# ── Single listing ────────────────────────────────────────────────────────────
+# ── Single listing (now includes owner name + email) ──────────────────────────
 
-@router.get("/{listing_id}", response_model=Listing)
+from sqlmodel import SQLModel as _SQLModel
+
+class ListingWithOwner(_SQLModel):
+    id: int
+    title: str
+    description: str
+    category: str
+    city: str
+    address: str
+    price_per_day: float
+    price_per_hour: Optional[float] = None
+    capacity: int
+    size_sqft: int
+    amenities: Optional[list] = None
+    image_url: str
+    owner_id: int
+    owner_name: Optional[str] = None
+    owner_email: Optional[str] = None
+
+@router.get("/{listing_id}", response_model=ListingWithOwner)
 def read_listing(listing_id: int, session: Session = Depends(get_session)):
     listing = session.get(Listing, listing_id)
     if not listing:
         raise HTTPException(status_code=404, detail="Listing not found")
-    return listing
+    owner = session.get(User, listing.owner_id)
+    return ListingWithOwner(
+        **listing.model_dump(),
+        owner_name=owner.name if owner else None,
+        owner_email=owner.email if owner else None,
+    )
 
 
-# ── Create (auth required — owner_id comes from JWT) ──────────────────────────
+# ── Create ────────────────────────────────────────────────────────────────────
 
 @router.post("", response_model=Listing, status_code=201)
 def create_listing(

@@ -3,7 +3,7 @@ OpenSpot is a full-stack web appliction with a completely seperated frontend and
 find those with commercial spaces ready to rent, and connect people looking for those very own spaced.
 This includes, Venues, Barns, Churches, Warehouses and so forth.
 These allow people to rent these spaces for various different reasons, such as, Weddings, Parties, Storage, etc. 
-In doing this, OpenSpot also does good for the environment, by utilizing the spaces we already have, this deters 
+In doing this, OpenSpot also benifits the environment, by utilizing the spaces we already have, this deters 
 new buildings from being built, and let's us not waste any more of our precious environment.
 
 - **Frontend:** React + Vite

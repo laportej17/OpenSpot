@@ -51,9 +51,12 @@ VITE_API_URL=http://127.0.0.1:8000
 - Booking request form
 
 **Team Contributions**
+
 John Laporte
-- 
+
 Owen Doucet
--
+
 Stephan Sommerfeld
--
+Created the initial project including both frontend and backend sections.
+Added book by the hour, which includes the listing price by the hour, and booking options.
+Added the host name and contact info for those browsing listings.

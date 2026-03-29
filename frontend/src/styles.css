@@ -195,12 +195,16 @@ button:active { transform: translateY(0); }
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   overflow: hidden;
-  transition: transform var(--transition), box-shadow var(--transition);
+  transition: transform 250ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
+              box-shadow 250ms ease;
   cursor: pointer;
+  display: block;
+  height: 100%;
 }
 .card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-8px);
   box-shadow: var(--shadow-lg);
+  border-color: transparent;
 }
 
 .card-image {
@@ -264,14 +268,6 @@ button:active { transform: translateY(0); }
   padding: 4rem 3.5rem;
   position: relative;
   overflow: hidden;
-}
-.hero::before {
-  content: '';
-  position: absolute;
-  top: -60px; right: -60px;
-  width: 320px; height: 320px;
-  background: radial-gradient(circle, var(--accent-bg) 0%, transparent 70%);
-  pointer-events: none;
 }
 .hero-eyebrow {
   font-size: 0.8rem;
@@ -568,7 +564,14 @@ textarea { resize: vertical; min-height: 100px; }
   margin: 1.5rem 0;
 }
 
-/* ── Animations ──────────────────────────────────────────── */
+/* ── Category link ───────────────────────────────────────── */
+.category-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ── Keyframes ───────────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
@@ -577,11 +580,74 @@ textarea { resize: vertical; min-height: 100px; }
   from { opacity: 0; transform: translateY(16px) scale(0.97); }
   to   { opacity: 1; transform: translateY(0) scale(1); }
 }
-.fade-in {
-  animation: fadeIn 300ms ease both;
+@keyframes wordIn {
+  to { opacity: 1; transform: translateY(0); }
 }
-.slide-up {
-  animation: slideUp 300ms cubic-bezier(0.34,1.2,0.64,1) both;
+
+.fade-in { animation: fadeIn 300ms ease both; }
+.slide-up { animation: slideUp 300ms cubic-bezier(0.34,1.2,0.64,1) both; }
+
+/* ── Scroll reveal ───────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Staggered children */
+.reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.reveal-stagger.visible > * {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-stagger.visible > *:nth-child(1)    { transition-delay: 0.05s; }
+.reveal-stagger.visible > *:nth-child(2)    { transition-delay: 0.10s; }
+.reveal-stagger.visible > *:nth-child(3)    { transition-delay: 0.15s; }
+.reveal-stagger.visible > *:nth-child(4)    { transition-delay: 0.20s; }
+.reveal-stagger.visible > *:nth-child(5)    { transition-delay: 0.25s; }
+.reveal-stagger.visible > *:nth-child(6)    { transition-delay: 0.30s; }
+.reveal-stagger.visible > *:nth-child(7)    { transition-delay: 0.35s; }
+.reveal-stagger.visible > *:nth-child(8)    { transition-delay: 0.40s; }
+.reveal-stagger.visible > *:nth-child(9)    { transition-delay: 0.45s; }
+.reveal-stagger.visible > *:nth-child(10)   { transition-delay: 0.50s; }
+.reveal-stagger.visible > *:nth-child(n+11) { transition-delay: 0.55s; }
+
+/* ── Hero animations ─────────────────────────────────────── */
+.hero-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(18px);
+  animation: wordIn 0.5s ease forwards;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: -100px;
+  background:
+    radial-gradient(circle at 60% 40%, rgba(224,123,79,0.4) 0%, transparent 40%),
+    radial-gradient(circle at 55% 45%, rgba(224,123,79,0.15) 0%, transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* ── Page transitions ────────────────────────────────────── */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 /* ── Responsive ──────────────────────────────────────────── */
@@ -600,100 +666,4 @@ textarea { resize: vertical; min-height: 100px; }
   .panel { padding: 1.25rem; }
   .auth-card { padding: 1.75rem 1.25rem; }
   .detail-meta { grid-template-columns: 1fr 1fr; }
-}
-
-/* ── Animations ──────────────────────────────────────────────────────────── */
-
-/* Fade + slide up on scroll */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.55s ease, transform 0.55s ease;
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Staggered children */
-.reveal-stagger > * {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s ease, transform 0.5s ease;
-}
-.reveal-stagger.visible > *:nth-child(1) { transition-delay: 0.05s; opacity: 1; transform: none; }
-.reveal-stagger.visible > *:nth-child(2) { transition-delay: 0.15s; opacity: 1; transform: none; }
-.reveal-stagger.visible > *:nth-child(3) { transition-delay: 0.25s; opacity: 1; transform: none; }
-.reveal-stagger.visible > *:nth-child(4) { transition-delay: 0.35s; opacity: 1; transform: none; }
-
-/* Word-by-word hero text */
-.hero-word {
-  display: inline-block;
-  opacity: 0;
-  transform: translateY(18px);
-  animation: wordIn 0.5s ease forwards;
-}
-@keyframes wordIn {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Hero parallax */
-.hero {
-  overflow: hidden;
-  position: relative;
-}
-.hero-bg {
-  position: absolute;
-  inset: -100px; /* Expand the bleed area */
-  background: 
-    /* The bright core */
-    radial-gradient(circle at 60% 40%, rgba(224, 123, 79, 0.4) 0%, transparent 40%),
-    /* The soft ambient glow */
-    radial-gradient(circle at 55% 45%, rgba(224, 123, 79, 0.15) 0%, transparent 70%);
-  filter: blur(40px); /* Softens the edges for a more natural look */
-  pointer-events: none;
-}
-
-/* Base Card Styling */
-.card {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,0.05); /* subtle border */
-  transition: transform 250ms cubic-bezier(0.175, 0.885, 0.32, 1.275), 
-              box-shadow 250ms ease;
-  height: 100%;
-  display: block; /* Critical for transform to work */
-}
-
-/* Hover State */
-.card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-  border-color: transparent;
-}
-
-/* Ensure the Link doesn't break the layout */
-.category-link {
-  display: block;
-  transition: none; /* Let the card inside handle it */
-}
-
-/* If you still want to keep the .panel styling for other things, 
-   you can alias it: */
-.panel {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-}
-
-/* Page transition */
-.page-enter {
-  opacity: 0;
-  transform: translateY(10px);
-}
-.page-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 0.3s ease, transform 0.3s ease;
 }

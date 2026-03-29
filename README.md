@@ -11,7 +11,7 @@ cd backend
 python -m venv .venv
 source .venv/bin/activate
 # Windows: .venv\Scripts\activate
-#py -3.13 -m venv .venv  
+#py -3.13 -m venv .venv  or pip install .
 pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```

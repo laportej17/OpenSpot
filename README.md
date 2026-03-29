@@ -1,6 +1,11 @@
-# OpenSpot MVP
+# OpenSpot 
+OpenSpot is a full-stack web appliction with a completely seperated frontend and backend. It's main purpose is to
+find those with commercial spaces ready to rent, and connect people looking for those very own spaced.
+This includes, Venues, Barns, Churches, Warehouses and so forth.
+These allow people to rent these spaces for various different reasons, such as, Weddings, Parties, Storage, etc. 
+In doing this, OpenSpot also does good for the environment, by utilizing the spaces we already have, this deters 
+new buildings from being built, and let's us not waste any more of our precious environment.
 
-A basic hackathon-ready full-stack starter for OpenSpot:
 - **Frontend:** React + Vite
 - **Backend:** FastAPI + SQLModel + SQLite
 

@@ -56,7 +56,7 @@ John Laporte
 
 Owen Doucet
 
-Stephan Sommerfeld
+Stephan Sommerfeld:
 Created the initial project including both frontend and backend sections.
 Added book by the hour, which includes the listing price by the hour, and booking options.
 Added the host name and contact info for those browsing listings.

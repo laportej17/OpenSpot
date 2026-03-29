@@ -2,13 +2,8 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
-import { getListing, createBooking } from '../api/client';
-
-function daysBetween(start, end) {
-  if (!start || !end) return 0;
-  const ms = new Date(end) - new Date(start);
-  return Math.max(0, Math.round(ms / (1000 * 60 * 60 * 24)));
-}
+import BookingForm from '../components/BookingForm';
+import { getListing } from '../api/client';
 
 export default function ListingDetailPage() {
   const { id } = useParams();
@@ -16,11 +11,7 @@ export default function ListingDetailPage() {
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [form, setForm] = useState({ start_date: '', end_date: '', purpose: '' });
-  const [status, setStatus] = useState('');
-  const [statusMsg, setStatusMsg] = useState('');
   const [showModal, setShowModal] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -40,40 +31,6 @@ export default function ListingDetailPage() {
   if (error || !listing) return <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--ink-3)' }}>{error || 'Listing not found.'}</div>;
 
   const isOwner = user && user.id === listing.owner_id;
-  const nights = daysBetween(form.start_date, form.end_date);
-  const total = nights * listing.price_per_day;
-
-  async function handleBooking(e) {
-    e.preventDefault();
-    if (!user) { setShowModal(true); return; }
-    if (isOwner) return;
-
-    if (form.start_date >= form.end_date) {
-      setStatus('error');
-      setStatusMsg('End date must be after start date.');
-      return;
-    }
-
-    setStatus('');
-    setStatusMsg('');
-    setSubmitting(true);
-    try {
-      await createBooking({
-        listing_id: listing.id,
-        start_date: form.start_date,
-        end_date: form.end_date,
-        purpose: form.purpose,
-      });
-      setStatus('success');
-      setStatusMsg('✓ Request sent! Check My Bookings for updates.');
-      setForm({ start_date: '', end_date: '', purpose: '' });
-    } catch (err) {
-      setStatus('error');
-      setStatusMsg(err.message || 'Something went wrong. Try again.');
-    } finally {
-      setSubmitting(false);
-    }
-  }
 
   return (
     <>
@@ -123,6 +80,11 @@ export default function ListingDetailPage() {
                 ${listing.price_per_day}
               </span>
               <span style={{ color: 'var(--ink-3)', fontSize: '0.9rem' }}> / day</span>
+              {listing.price_per_hour != null && (
+                <span style={{ color: 'var(--ink-3)', fontSize: '0.9rem', marginLeft: 8 }}>
+                  · ${listing.price_per_hour} / hr
+                </span>
+              )}
             </div>
             <div className="divider" />
 
@@ -131,69 +93,11 @@ export default function ListingDetailPage() {
                 This is your listing — you can't book your own space.
               </p>
             ) : (
-              <form onSubmit={handleBooking} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <label>
-                  Start Date
-                  <input
-                    type="date"
-                    required
-                    value={form.start_date}
-                    min={new Date().toISOString().split('T')[0]}
-                    onChange={e => setForm({ ...form, start_date: e.target.value })}
-                  />
-                </label>
-                <label>
-                  End Date
-                  <input
-                    type="date"
-                    required
-                    value={form.end_date}
-                    min={form.start_date || new Date().toISOString().split('T')[0]}
-                    onChange={e => setForm({ ...form, end_date: e.target.value })}
-                  />
-                </label>
-
-                {/* ── Price calculator ── */}
-                {nights > 0 && (
-                  <div style={{
-                    background: 'var(--bg-2, #f8f8f6)',
-                    borderRadius: 8,
-                    padding: '0.75rem 1rem',
-                    fontSize: '0.875rem',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.3rem',
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--ink-2)' }}>
-                      <span>${listing.price_per_day} × {nights} day{nights !== 1 ? 's' : ''}</span>
-                      <span>${(listing.price_per_day * nights).toLocaleString()}</span>
-                    </div>
-                    <div className="divider" style={{ margin: '0.3rem 0' }} />
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 600 }}>
-                      <span>Total</span>
-                      <span>${total.toLocaleString()}</span>
-                    </div>
-                  </div>
-                )}
-
-                <label>
-                  Purpose
-                  <textarea
-                    rows={3}
-                    required
-                    placeholder="What will you use this space for?"
-                    value={form.purpose}
-                    onChange={e => setForm({ ...form, purpose: e.target.value })}
-                  />
-                </label>
-
-                {status === 'success' && <p className="success">{statusMsg}</p>}
-                {status === 'error' && <p className="error">{statusMsg}</p>}
-
-                <button type="submit" disabled={submitting}>
-                  {submitting ? 'Sending…' : 'Request to Book'}
-                </button>
-              </form>
+              <BookingForm
+                listingId={listing.id}
+                pricePerDay={listing.price_per_day}
+                pricePerHour={listing.price_per_hour}
+              />
             )}
           </div>
         </div>

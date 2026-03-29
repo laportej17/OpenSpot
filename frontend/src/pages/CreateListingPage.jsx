@@ -6,11 +6,6 @@ import { createListing, uploadImage } from '../api/client';
 
 const CATEGORIES = ['event venue', 'office', 'storage', 'studio'];
 
-// ── Image uploader sub-component ──────────────────────────────────────────────
-// If VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET are set in
-// frontend/.env, renders a file picker that uploads directly to Cloudinary.
-// Otherwise falls back to a plain URL input field.
-
 function ImageUploader({ value, onChange }) {
   const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
   const uploadPreset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
@@ -35,7 +30,6 @@ function ImageUploader({ value, onChange }) {
   }
 
   if (!cloudinaryReady) {
-    // Fallback: plain URL input (original behaviour)
     return (
       <label className="full-width">
         Image URL
@@ -65,16 +59,9 @@ function ImageUploader({ value, onChange }) {
         <img
           src={value}
           alt="Preview"
-          style={{
-            width: '100%',
-            maxHeight: 200,
-            objectFit: 'cover',
-            borderRadius: 8,
-            marginTop: 4,
-          }}
+          style={{ width: '100%', maxHeight: 200, objectFit: 'cover', borderRadius: 8, marginTop: 4 }}
         />
       )}
-      {/* Also allow pasting a URL if upload doesn't suit */}
       <label style={{ marginTop: '0.5rem', fontSize: '0.8rem', color: 'var(--ink-3)' }}>
         Or paste an image URL
         <input
@@ -97,6 +84,7 @@ const initialForm = {
   city: '',
   address: '',
   price_per_day: '',
+  price_per_hour: '',        // NEW
   capacity: '',
   size_sqft: '',
   amenities: '',
@@ -134,13 +122,13 @@ export default function CreateListingPage() {
       await createListing({
         ...form,
         price_per_day: parseFloat(form.price_per_day),
+        price_per_hour: form.price_per_hour === '' ? null : parseFloat(form.price_per_hour),  // NEW
         capacity: parseInt(form.capacity),
         size_sqft: parseInt(form.size_sqft),
         amenities: form.amenities
           .split(',')
           .map(a => a.trim())
           .filter(Boolean),
-        // owner_id is set by the backend from the JWT — no need to send it
       });
       setStatus('success');
       setTimeout(() => navigate('/my-listings'), 1500);
@@ -197,6 +185,18 @@ export default function CreateListingPage() {
               </label>
 
               <label>
+                Price per hour ($ · optional)
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  placeholder="Leave blank to disable hourly booking"
+                  value={form.price_per_hour}
+                  onChange={set('price_per_hour')}
+                />
+              </label>
+
+              <label>
                 Capacity (people)
                 <input required type="number" min="1" placeholder="20" value={form.capacity} onChange={set('capacity')} />
               </label>
@@ -222,7 +222,6 @@ export default function CreateListingPage() {
                 />
               </label>
 
-              {/* Image uploader — Cloudinary if configured, URL input otherwise */}
               <ImageUploader
                 value={form.image_url}
                 onChange={url => setForm(f => ({ ...f, image_url: url }))}
@@ -242,7 +241,6 @@ export default function CreateListingPage() {
           </form>
         </div>
 
-        {/* Cloudinary setup hint (only shown if not configured) */}
         {!import.meta.env.VITE_CLOUDINARY_CLOUD_NAME && (
           <p style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--ink-3)' }}>
             Tip: to enable photo uploads, add{' '}

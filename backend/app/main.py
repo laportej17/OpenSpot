@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.database import create_db_and_tables, engine
+from app.database import create_db_and_tables, run_migrations, engine
 from app.routers import bookings, listings, users
 from app.seed import seed_listings
 from sqlmodel import Session
@@ -18,6 +18,7 @@ app.add_middleware(
 @app.on_event('startup')
 def on_startup() -> None:
     create_db_and_tables()
+    run_migrations()  # add this line
     with Session(engine) as session:
         seed_listings(session)
 

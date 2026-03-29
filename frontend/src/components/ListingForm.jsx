@@ -9,6 +9,7 @@ const initialState = {
   city: '',
   address: '',
   price_per_day: 0,
+  price_per_hour: '',
   capacity: 0,
   size_sqft: 0,
   amenities: '',
@@ -38,6 +39,7 @@ export default function ListingForm() {
       await createListing({
         ...formData,
         price_per_day: Number(formData.price_per_day),
+        price_per_hour: formData.price_per_hour === '' ? null : Number(formData.price_per_hour),
         capacity: Number(formData.capacity),
         size_sqft: Number(formData.size_sqft),
         amenities: formData.amenities.split(',').map((item) => item.trim()).filter(Boolean)
@@ -77,8 +79,20 @@ export default function ListingForm() {
         <input name="address" value={formData.address} onChange={handleChange} required />
       </label>
       <label>
-        Price per day
+        Price per day ($)
         <input type="number" name="price_per_day" value={formData.price_per_day} onChange={handleChange} min="0" required />
+      </label>
+      <label>
+        Price per hour ($ · optional)
+        <input
+          type="number"
+          name="price_per_hour"
+          value={formData.price_per_hour}
+          onChange={handleChange}
+          min="0"
+          step="0.01"
+          placeholder="Leave blank to disable hourly booking"
+        />
       </label>
       <label>
         Capacity

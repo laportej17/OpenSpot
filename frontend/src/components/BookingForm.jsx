@@ -90,7 +90,7 @@ export default function BookingForm({ listingId, pricePerDay, pricePerHour }) {
       <h3>Request this space</h3>
 
       {/* Toggle tabs */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
         <button type="button" style={tabStyle(bookingType === 'daily')}
           onClick={() => setBookingType('daily')}>
           By day · ${pricePerDay}/day
@@ -169,8 +169,7 @@ export default function BookingForm({ listingId, pricePerDay, pricePerHour }) {
           </span>
         </p>
       )}
-
-      <button type="submit">Submit booking</button>
+      <button type="submit" style={{ marginTop: '1rem' }}>Submit booking</button>
       {status.message && <p className={status.type}>{status.message}</p>}
     </form>
   );

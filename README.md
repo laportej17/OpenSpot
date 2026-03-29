@@ -49,3 +49,11 @@ VITE_API_URL=http://127.0.0.1:8000
 - Listing details
 - Create listing
 - Booking request form
+
+**Team Contributions**
+John Laporte
+- 
+Owen Doucet
+-
+Stephan Sommerfeld
+-

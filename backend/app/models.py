@@ -37,11 +37,12 @@ class ListingBase(SQLModel):
     city: str
     address: str
     price_per_day: float
-    price_per_hour: Optional[float] = None          # NEW — None = hourly not available
+    price_per_hour: Optional[float] = None
     capacity: int
     size_sqft: int
     amenities: Optional[list] = Field(default=None, sa_column=Column(JSON))
     image_url: str
+    image_urls: Optional[list] = Field(default=None, sa_column=Column(JSON))
     owner_id: int
 
 class Listing(ListingBase, table=True):
@@ -54,11 +55,12 @@ class ListingCreate(SQLModel):
     city: str
     address: str
     price_per_day: float
-    price_per_hour: Optional[float] = None          # NEW
+    price_per_hour: Optional[float] = None
     capacity: int
     size_sqft: int
     amenities: Optional[list] = None
     image_url: str
+    image_urls: Optional[list] = None
 
 class ListingUpdate(SQLModel):
     title: Optional[str] = None
@@ -67,17 +69,18 @@ class ListingUpdate(SQLModel):
     city: Optional[str] = None
     address: Optional[str] = None
     price_per_day: Optional[float] = None
-    price_per_hour: Optional[float] = None          # NEW
+    price_per_hour: Optional[float] = None
     capacity: Optional[int] = None
     size_sqft: Optional[int] = None
     amenities: Optional[list] = None
     image_url: Optional[str] = None
+    image_urls: Optional[list] = None
 
 
 # ── Bookings ──────────────────────────────────────────────────────────────────
 
 VALID_STATUSES = {"pending", "approved", "declined", "cancelled"}
-VALID_BOOKING_TYPES = {"daily", "hourly"}                       # NEW
+VALID_BOOKING_TYPES = {"daily", "hourly"}
 
 class BookingBase(SQLModel):
     listing_id: int
@@ -85,9 +88,9 @@ class BookingBase(SQLModel):
     start_date: str
     end_date: str
     purpose: str
-    booking_type: str = Field(default="daily")      # NEW: "daily" | "hourly"
-    start_time: Optional[str] = None                # NEW: "HH:MM"  (hourly only)
-    end_time: Optional[str] = None                  # NEW: "HH:MM"  (hourly only)
+    booking_type: str = Field(default="daily")
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
 
 class Booking(BookingBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -98,9 +101,9 @@ class BookingCreate(SQLModel):
     start_date: str
     end_date: str
     purpose: str
-    booking_type: str = "daily"                     # NEW
-    start_time: Optional[str] = None                # NEW
-    end_time: Optional[str] = None                  # NEW
+    booking_type: str = "daily"
+    start_time: Optional[str] = None
+    end_time: Optional[str] = None
 
 class BookingRead(BookingBase):
     id: int

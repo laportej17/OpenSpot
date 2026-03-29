@@ -170,7 +170,7 @@ export default function BookingForm({ listingId, pricePerDay, pricePerHour }) {
         </p>
       )}
       <button type="submit" style={{ marginTop: '1rem' }}>Submit booking</button>
-      {status.message && <p className={status.type}>{status.message}</p>}
+      {status.message && <p className={status.type} style={{marginTop: '1rem'}}>{status.message}</p>}
     </form>
   );
 }

@@ -54,7 +54,9 @@ VITE_API_URL=http://127.0.0.1:8000
 
 John Laporte
 
-Owen Doucet
+Owen Doucet:
+Reworked the entire frontend, created animations while also keeping the design intuitive and simple for a wide demographic of possible users. 
+Debugged backend code, contributed towards bookings/listings features, login/signup account creation.
 
 Stephan Sommerfeld:
 Created the initial project including both frontend and backend sections.

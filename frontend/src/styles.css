@@ -654,13 +654,37 @@ textarea { resize: vertical; min-height: 100px; }
   pointer-events: none;
 }
 
-/* Card hover lift */
+/* Base Card Styling */
 .card {
-  transition: transform 200ms ease, box-shadow 200ms ease;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,0.05); /* subtle border */
+  transition: transform 250ms cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+              box-shadow 250ms ease;
+  height: 100%;
+  display: block; /* Critical for transform to work */
 }
+
+/* Hover State */
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+  border-color: transparent;
+}
+
+/* Ensure the Link doesn't break the layout */
+.category-link {
+  display: block;
+  transition: none; /* Let the card inside handle it */
+}
+
+/* If you still want to keep the .panel styling for other things, 
+   you can alias it: */
+.panel {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
 }
 
 /* Page transition */

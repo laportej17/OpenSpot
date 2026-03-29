@@ -72,11 +72,14 @@ export default function HomePage() {
           style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}
         >
           {CATEGORIES.map(cat => (
-            <Link to={`/listings?category=${cat.label.toLowerCase()}`} key={cat.label}>
-              <div
-                className="panel"
-                style={{ textAlign: 'center', cursor: 'pointer' }}
-              >
+            /* We use a specific class on the Link to ensure it behaves like a block */
+            <Link 
+              to={`/listings?category=${cat.label.toLowerCase()}`} 
+              key={cat.label}
+              className="category-link"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <div className="card" style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '2.25rem', marginBottom: '0.75rem' }}>{cat.emoji}</div>
                 <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '0.25rem' }}>{cat.label}</div>
                 <div style={{ fontSize: '0.85rem', color: 'var(--ink-3)' }}>{cat.desc}</div>
@@ -88,8 +91,8 @@ export default function HomePage() {
 
       {/* CTA */}
       <div
-        className="panel reveal"
-        style={{ background: 'var(--accent-bg)', border: '1px solid #f0cdb8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}
+        className="card reveal" 
+        style={{ background: 'var(--accent-bg)', border: '1px solid #f0cdb8', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem', padding: '2rem' }}
       >
         <div>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', marginBottom: '0.35rem' }}>Have a space to share?</h2>

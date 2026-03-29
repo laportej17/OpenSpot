@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 
 const CATEGORIES = [
-  { label: 'Event Venues', emoji: '🎉', desc: 'Barns, halls, rooftops' },
-  { label: 'Offices', emoji: '💼', desc: 'Desks, meeting rooms, suites' },
+  { label: 'Event Venue', emoji: '🎉', desc: 'Barns, halls, rooftops' },
+  { label: 'Office', emoji: '💼', desc: 'Desks, meeting rooms, suites' },
   { label: 'Storage', emoji: '📦', desc: 'Units, warehouses, lockers' },
-  { label: 'Studios', emoji: '🎨', desc: 'Photo, music, art' },
+  { label: 'Studio', emoji: '🎨', desc: 'Photo, music, art' },
 ];
 
 export default function HomePage() {

@@ -10,7 +10,6 @@ export default function ListingsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Filter state — initialised from URL query params
   const [filters, setFilters] = useState({
     category: searchParams.get('category') || '',
     city: searchParams.get('city') || '',
@@ -23,11 +22,9 @@ export default function ListingsPage() {
       setLoading(true);
       setError('');
       try {
-        // Sync active filters into the URL
         const params = {};
         Object.entries(filters).forEach(([k, v]) => { if (v) params[k] = v; });
         setSearchParams(params, { replace: true });
-
         const data = await getListings(filters);
         setListings(data);
       } catch (e) {
@@ -51,14 +48,16 @@ export default function ListingsPage() {
 
   return (
     <div className="fade-in">
-      <div className="page-header">
+
+      {/* Header */}
+      <div className="page-header reveal">
         <h1>Browse Spaces</h1>
         <p>Find the perfect space for your next event, project, or need</p>
       </div>
 
-      {/* ── Filter bar ── */}
+      {/* Filter bar */}
       <div
-        className="panel"
+        className="panel reveal"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
@@ -103,19 +102,21 @@ export default function ListingsPage() {
         )}
       </div>
 
-      {/* ── Results ── */}
+      {/* Loading */}
       {loading && (
         <div className="empty-state"><p>Loading spaces…</p></div>
       )}
 
+      {/* Error */}
       {error && (
         <div className="panel" style={{ color: 'var(--color-danger, #c0392b)', marginBottom: '1rem' }}>
           {error}
         </div>
       )}
 
+      {/* Empty */}
       {!loading && !error && listings.length === 0 && (
-        <div className="empty-state">
+        <div className="empty-state reveal">
           <p style={{ fontSize: '2rem' }}>🔍</p>
           <p>No spaces match your filters.</p>
           {hasActiveFilters && (
@@ -126,10 +127,11 @@ export default function ListingsPage() {
         </div>
       )}
 
+      {/* Results */}
       {!loading && !error && listings.length > 0 && (
-        <div className="card-grid">
+        <div className="card-grid reveal-stagger">
           {listings.map(l => (
-            <Link to={`/listings/${l.id}`} key={l.id}>
+            <Link to={`/listings/${l.id}`} key={l.id} style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="card">
                 <img className="card-image" src={l.image_url} alt={l.title} />
                 <div className="card-body">
